@@ -6,7 +6,7 @@ from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.service import Service
 from selenium.webdriver.common.keys import Keys
-# 312
+
 df_stock = pd.DataFrame()
 df_offline_benchmark = pd.DataFrame()
 df_normal = pd.DataFrame()
@@ -153,10 +153,9 @@ class Samples:
         if self.way == '自如友家':
             self.query_word()
             # 查询库存
-            sample_num, price_mean_stock = self.get_query(
-                self.df_stock, self.query_friend)
+            sample_num, price_mean_friend = self.get_query(self.df_stock, self.query_friend)
             if sample_num:
-                price_evaluate = self.one_top_adjust(price_mean_stock, one_top_index)
+                price_evaluate = self.one_top_adjust(price_mean_friend, one_top_index)
 
                 print('新签友家有库存样本', price_evaluate)
                 self.price_source = '自如库存'
@@ -176,16 +175,17 @@ class Samples:
                 self.source_edition_stock = edition[2]
                 self.query_word()
 
-                sample_num_stock, price_mean_stock = self.get_query(
-                    self.df_stock, self.query_whole)
+                sample_num_stock, price_mean_stock = self.get_query(self.df_stock, self.query_whole)
                 if sample_num_stock:
                     break
                 else:
                     print('此产品版本无样本')
 
             if sample_num_stock:
+
+                price_mean_stock = price_mean_stock * self.product_index
                 # 一顶层处理
-                price_evaluate_stock = self.one_top_adjust(price_mean_stock, one_top_index) * self.product_index
+                price_evaluate_stock = self.one_top_adjust(price_mean_stock, one_top_index)
 
                 print(f'新签整租有库存样本{sample_num_stock}个', price_evaluate_stock)
             else:
@@ -198,8 +198,7 @@ class Samples:
             self.source_edition_normal = '普租整租'
             self.query_word()
 
-            sample_num_normal, price_mean_normal = self.get_query(
-                self.df_normal, self.query_whole)
+            sample_num_normal, price_mean_normal = self.get_query(self.df_normal, self.query_whole)
 
 
             if sample_num_normal:
@@ -241,18 +240,18 @@ class Samples:
 
             return price_evaluate
 
-    def determine_extension(self):
+    def determine_extension(self) ->int:
         """确定续约价格"""
         # 友家
         if self.way == '自如友家':
             self.query_word()
 
             # 查询库存
-            sample_num, price_mean_friend = self.get_query(
-                self.df_stock, self.query_friend)
+            sample_num, price_mean_friend = self.get_query(self.df_stock, self.query_friend)
             if sample_num:
                 price_diff_rate = (price_mean_friend - self.price_promotion) / self.price_promotion
                 print('续约友家有库存样本', price_mean_friend, '差异率', price_diff_rate)
+
                 price_evaluate = self.extension_adjust(price_mean_friend,price_diff_rate)
 
                 price_evaluate = self.one_top_adjust(price_evaluate, one_top_index)
@@ -274,8 +273,7 @@ class Samples:
                 self.source_edition_stock = edition[2]
                 self.query_word()
 
-                sample_num_stock, price_mean_stock = self.get_query(
-                    self.df_stock, self.query_whole)
+                sample_num_stock, price_mean_stock = self.get_query(self.df_stock, self.query_whole)
                 if sample_num_stock:
                     break
                 else:
@@ -284,8 +282,10 @@ class Samples:
             if sample_num_stock:
 
                 price_diff_rate = (price_mean_stock - self.price_promotion) / self.price_promotion
+                # 产品版本影响
+                price_mean_stock = price_mean_stock * self.product_index
 
-                price_evaluate_stock = self.extension_adjust(price_mean_stock,price_diff_rate) * self.product_index
+                price_evaluate_stock = self.extension_adjust(price_mean_stock,price_diff_rate)
 
                 price_evaluate_stock = self.one_top_adjust(price_evaluate_stock,one_top_index)
                 print('续约整租有库存样本', price_evaluate_stock)
@@ -299,8 +299,7 @@ class Samples:
             self.source_edition_normal = '普租整租'
             self.query_word()
 
-            sample_num_normal, price_mean_normal = self.get_query(
-                self.df_normal, self.query_whole)
+            sample_num_normal, price_mean_normal = self.get_query(self.df_normal, self.query_whole)
 
             if sample_num_normal:
                 wuye, year_index, part_index = self.query_wuye_year(price_mean_normal)
@@ -320,7 +319,7 @@ class Samples:
 
                 price_evaluate_normal = self.extension_adjust(price_evaluate_normal,price_diff_rate)
                 # 一顶层处理
-                price_evaluate_stock = self.one_top_adjust(price_evaluate_normal, one_top_index)
+                price_evaluate_normal = self.one_top_adjust(price_evaluate_normal, one_top_index)
 
                 print('续约整租有普租样本均价', price_evaluate_normal)
             else:
