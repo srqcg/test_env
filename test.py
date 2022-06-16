@@ -1,6 +1,10 @@
-print('索拉卡')
-"""
+def a():
+    """
 
-第二次
+    :return: x
+    """
+    x = 12
+    return x
 
-"""
+
+print(a())
