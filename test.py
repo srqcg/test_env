@@ -1,2 +1,2 @@
 print('索拉卡')
-print(312)
+p='werqw'
