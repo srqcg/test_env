@@ -414,7 +414,7 @@ class Receive:
             if price_evaluate:
                 self.price_final_list.append(price_evaluate)
                 self.evaluate_room_num += 1
-            elif self.confidence >= 0.95:
+            elif self.confidence >= 92:
                 self.price_final_list.append(price_arith_this)
                 self.evaluate_room_num += 1
                 print('使用算法价,',price_arith_this)
@@ -566,15 +566,15 @@ class Receive:
             by='xpath',
             value='//*[@id="must_do_not_change_this_id"]/div[2]/section/div[5]/div/div[3]/div/button[2]')
         time.sleep(0.5)
-        # submit_button.click()
-        # time.sleep(0.5)
+        submit_button.click()
+        time.sleep(0.5)
 
         # 测试阶段,点击空白跳过,并返回
-        ActionChains(self.driver).move_to_element_with_offset(submit_button, 0, 200).click().perform()
-        time.sleep(0.5)
-        # 并返回
-        self.driver.back()
-        self.order = self.order + 1
+        # ActionChains(self.driver).move_to_element_with_offset(submit_button, 0, 200).click().perform()
+        # time.sleep(0.5)
+        # # 并返回
+        # self.driver.back()
+        # self.order = self.order + 1
 
     def extension_friend_home(self):
         """续约友家规则, 与新签不同处在于有户型变更"""
@@ -610,7 +610,7 @@ class Receive:
             if price_evaluate:
                 self.price_final_list.append(price_evaluate)
                 self.evaluate_room_num += 1
-            elif self.confidence >= 0.95:
+            elif self.confidence >= 92:
                 self.price_final_list.append(price_arith_this)
                 self.evaluate_room_num += 1
                 print('使用算法价,', price_arith_this)
